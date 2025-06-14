@@ -1,0 +1,26 @@
+version: "2"
+linters:
+  default: all
+  disable:
+    - exhaustruct
+    - varnamelen
+    - wsl
+    - nlreturn
+    - forbidigo
+    - sqlclosecheck # our beautiful handleErrClose does not like this
+    - funlen # arbitrary limits are not useful
+    - cyclop # ¯\_(ツ)_/¯
+    - paralleltest
+  settings:
+    lll:
+      line-length: 140
+    depguard:
+      rules:
+        main:
+          allow:
+            - $gostd
+            - modernc.org/sqlite
+    revive:
+      rules:
+        - name: package-comments # doesn't work very well with build tags
+          disabled: true

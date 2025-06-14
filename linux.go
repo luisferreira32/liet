@@ -7,5 +7,3 @@ const (
 	defaultConfigFile   = `.config/liet.conf`
 	defaultLogFile      = `.local/state/liet.log`
 )
-
-func init() {}

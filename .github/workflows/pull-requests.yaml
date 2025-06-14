@@ -1,0 +1,25 @@
+name: Check Pull Request
+on:
+  issue_comment:
+    types: [created, edited, deleted]
+jobs:
+  check:
+    if: |
+      github.event.issue.pull_request
+      && contains(github.event.comment.body, '/check')
+      && ( github.event.comment.author_association == 'COLLABORATOR'
+      || github.event.comment.author_association == 'OWNER')
+    runs-on: [ubununtu-latest]
+    # TODO: renovate to keep all of this up to date
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "^1.24.2"
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v8
+        with:
+          version: v2.1
+      - run: |
+          go mod tidy
+          go test -v ./...
