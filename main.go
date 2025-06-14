@@ -420,12 +420,20 @@ func main() {
 	defer recoverFeedback()
 
 	cleanup, err := configureLogger()
-	defer handleErrClose(cleanup)
+	defer func() { _ = cleanup() }()
 	feedbackOnErr(err)
 
 	a, f := parse()
 	c, err := loadUserConfig()
 	feedbackOnErr(err)
+
+	if f.yeet {
+		err = cleanup() // if we're yeeting the log file, we have to close it
+		feedbackOnErr(err)
+		err = yeet(c.databasePath)
+		feedbackOnErr(err)
+		return
+	}
 
 	db, err := sql.Open("sqlite", c.databasePath)
 	feedbackOnErr(err)
@@ -444,9 +452,6 @@ func main() {
 		feedbackOnErr(err)
 	case f.importCSV != "":
 		err = dbImport(db, f.importCSV)
-		feedbackOnErr(err)
-	case f.yeet:
-		err = yeet(c.databasePath)
 		feedbackOnErr(err)
 	default:
 		fmt.Println("I don't think you wanted to end up here... How about running with -h for help?")
