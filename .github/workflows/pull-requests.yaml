@@ -1,14 +1,7 @@
 name: Check Pull Request
-on:
-  issue_comment:
-    types: [created, edited, deleted]
+on: workflow_dispatch # just manual triggers for now
 jobs:
   check:
-    if: |
-      github.event.issue.pull_request
-      && contains(github.event.comment.body, '/check')
-      && ( github.event.comment.author_association == 'COLLABORATOR'
-      || github.event.comment.author_association == 'OWNER')
     runs-on: [ubununtu-latest]
     # TODO: renovate to keep all of this up to date
     steps:
@@ -22,4 +15,4 @@ jobs:
           version: v2.1
       - run: |
           go mod tidy
-          go test -v ./...
+          go test ./...
