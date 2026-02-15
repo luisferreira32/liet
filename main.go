@@ -297,11 +297,12 @@ func dbExport(db database, filePath string) error {
 	for rows.Next() {
 		var id int
 		var cost float64
-		var category, comment, date string
+		var category, comment sql.NullString
+		var date string
 		if err := rows.Scan(&id, &cost, &category, &comment, &date); err != nil {
 			return fmt.Errorf("failed to scan row: %w", err)
 		}
-		line := fmt.Sprintf("%d,%.2f,%s,%s,%s\n", id, cost, category, comment, date)
+		line := fmt.Sprintf("%d,%.2f,%s,%s,%s\n", id, cost, category.String, comment.String, date)
 		if _, err := f.WriteString(line); err != nil {
 			return fmt.Errorf("failed to write to export file: %w", err)
 		}
